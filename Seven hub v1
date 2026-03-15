@@ -1,0 +1,232 @@
+-- [[ STULEJEK UI V5.1 - ENGLISH VERSION ]] --
+local Players = game:GetService("Players")
+local RS = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TS = game:GetService("TweenService")
+local LP = Players.LocalPlayer
+
+-- Cleanup old UI
+if game.CoreGui:FindFirstChild("StulejekUI_V5_1") then game.CoreGui.StulejekUI_V5_1:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "StulejekUI_V5_1"
+
+local function Round(obj, r)
+    local c = Instance.new("UICorner", obj)
+    c.CornerRadius = UDim.new(0, r or 8)
+end
+
+-- --- 1. LOADING SCREEN ---
+local LoadMain = Instance.new("Frame", ScreenGui)
+LoadMain.Size = UDim2.new(0, 300, 0, 100)
+LoadMain.Position = UDim2.new(0.5, -150, 0.5, -50)
+LoadMain.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Round(LoadMain, 10)
+
+local LText = Instance.new("TextLabel", LoadMain)
+LText.Size = UDim2.new(1, 0, 0, 50)
+LText.Text = "STULEJEK UI"
+LText.TextColor3 = Color3.new(1, 1, 1)
+LText.Font = Enum.Font.GothamBold
+LText.TextSize = 20
+LText.BackgroundTransparency = 1
+
+local LBarBG = Instance.new("Frame", LoadMain)
+LBarBG.Size = UDim2.new(0, 240, 0, 4)
+LBarBG.Position = UDim2.new(0.5, -120, 0.7, 5)
+LBarBG.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Round(LBarBG, 2)
+
+local LBar = Instance.new("Frame", LBarBG)
+LBar.Size = UDim2.new(0, 0, 1, 0)
+LBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Round(LBar, 2)
+
+TS:Create(LBar, TweenInfo.new(4), {Size = UDim2.new(1, 0, 1, 0)}):Play()
+task.wait(4)
+LoadMain:Destroy()
+
+-- --- 2. MAIN INTERFACE ---
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 550, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Round(MainFrame, 12)
+
+-- TITLE BOX (Above UI)
+local TitleBox = Instance.new("Frame", MainFrame)
+TitleBox.Size = UDim2.new(0, 160, 0, 35)
+TitleBox.Position = UDim2.new(0.5, -80, 0, -45)
+TitleBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Round(TitleBox, 8)
+
+local TitleLabel = Instance.new("TextLabel", TitleBox)
+TitleLabel.Size = UDim2.new(1, 0, 1, 0)
+TitleLabel.Text = "STULEJEK UI"
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 16
+TitleLabel.BackgroundTransparency = 1
+
+-- Sidebar (RIGHT Side)
+local Sidebar = Instance.new("Frame", MainFrame)
+Sidebar.Size = UDim2.new(0, 120, 1, -20)
+Sidebar.Position = UDim2.new(1, -130, 0, 10)
+Sidebar.BackgroundTransparency = 1
+local SLayout = Instance.new("UIListLayout", Sidebar)
+SLayout.Padding = UDim.new(0, 6)
+
+-- Container (LEFT Side)
+local Container = Instance.new("Frame", MainFrame)
+Container.Size = UDim2.new(1, -150, 1, -20)
+Container.Position = UDim2.new(0, 10, 0, 10)
+Container.BackgroundTransparency = 1
+
+-- FPS COUNTER
+local FPSLabel = Instance.new("TextLabel", MainFrame)
+FPSLabel.Size = UDim2.new(0, 100, 0, 20)
+FPSLabel.Position = UDim2.new(0, 10, 1, -30)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.TextColor3 = Color3.new(0, 1, 0)
+FPSLabel.Font = Enum.Font.GothamBold
+FPSLabel.TextSize = 14
+FPSLabel.Text = "FPS: 60"
+FPSLabel.Visible = false
+RS.RenderStepped:Connect(function(dt) FPSLabel.Text = "FPS: " .. math.floor(1/dt) end)
+
+local State = {Fly = false, Noclip = false, Desync = false, Fling = false, AntiFling = false, InfJump = false, ESP = false, Lagger = false, LagIntensity = 1}
+
+-- Tabs Setup
+local Tabs = {
+    Main = Instance.new("ScrollingFrame", Container), 
+    Themes = Instance.new("ScrollingFrame", Container), 
+    Lagger = Instance.new("ScrollingFrame", Container), 
+    Description = Instance.new("ScrollingFrame", Container),
+    Kill = Instance.new("ScrollingFrame", Container)
+}
+
+for _, t in pairs(Tabs) do 
+    t.Size = UDim2.new(1,0,1,0); t.BackgroundTransparency = 1; t.Visible = false; t.ScrollBarThickness = 0; 
+    Instance.new("UIListLayout", t).Padding = UDim.new(0, 5) 
+end
+Tabs.Main.Visible = true
+
+local function AddButton(txt, parent, callback, isTab)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(1, 0, 0, 32)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.Text = isTab and txt or txt .. " [OFF]"
+    Round(btn, 6)
+    local act = false
+    btn.MouseButton1Click:Connect(function()
+        if not isTab then
+            act = not act
+            btn.Text = txt .. (act and " [ON]" or " [OFF]")
+            btn.BackgroundColor3 = act and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(45, 45, 45)
+        end
+        callback(act)
+    end)
+    return btn
+end
+
+-- Navigation (Sidebar Buttons)
+AddButton("Main", Sidebar, function() for _,t in pairs(Tabs) do t.Visible = false end Tabs.Main.Visible = true end, true)
+AddButton("Themes", Sidebar, function() for _,t in pairs(Tabs) do t.Visible = false end Tabs.Themes.Visible = true end, true)
+AddButton("Lagger", Sidebar, function() for _,t in pairs(Tabs) do t.Visible = false end Tabs.Lagger.Visible = true end, true)
+AddButton("Description", Sidebar, function() for _,t in pairs(Tabs) do t.Visible = false end Tabs.Description.Visible = true end, true)
+AddButton("Kill UI", Sidebar, function() for _,t in pairs(Tabs) do t.Visible = false end Tabs.Kill.Visible = true end, true)
+
+-- --- MAIN TAB CONTENT ---
+RS.RenderStepped:Connect(function()
+    if State.Fly and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = LP.Character.HumanoidRootPart
+        local cam = workspace.CurrentCamera
+        local move = Vector3.new()
+        if UIS:IsKeyDown(Enum.KeyCode.W) then move += cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.S) then move -= cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.A) then move -= cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.D) then move += cam.CFrame.RightVector end
+        hrp.Velocity = move * 60
+        if move.Magnitude == 0 then hrp.Velocity = Vector3.new(0,0.1,0) end
+    end
+end)
+
+AddButton("Fly", Tabs.Main, function(v) State.Fly = v end)
+AddButton("Noclip", Tabs.Main, function(v) State.Noclip = v end)
+AddButton("Desync", Tabs.Main, function(v) State.Desync = v end)
+AddButton("Touch Fling", Tabs.Main, function(v) State.Fling = v end)
+AddButton("Anti Fling", Tabs.Main, function(v) State.AntiFling = v end)
+AddButton("Infinite Jump", Tabs.Main, function(v) State.InfJump = v end)
+AddButton("FPS Counter", Tabs.Main, function(v) FPSLabel.Visible = v end)
+AddButton("ESP Highlight", Tabs.Main, function(v)
+    State.ESP = v
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP and p.Character then
+            if v then Instance.new("Highlight", p.Character).Name = "StulejekESP"
+            else if p.Character:FindFirstChild("StulejekESP") then p.Character.StulejekESP:Destroy() end end
+        end
+    end
+end)
+
+-- --- THEMES TAB ---
+local function ApplyTheme(m, b, t)
+    MainFrame.BackgroundColor3 = m
+    TitleBox.BackgroundColor3 = b
+    for _, btn in pairs(MainFrame:GetDescendants()) do if btn:IsA("TextButton") then btn.BackgroundColor3 = b btn.TextColor3 = t end end
+end
+AddButton("Red Theme", Tabs.Themes, function() ApplyTheme(Color3.fromRGB(150, 0, 0), Color3.fromRGB(0, 0, 0), Color3.new(1,1,1)) end, true)
+AddButton("OLED Theme", Tabs.Themes, function() ApplyTheme(Color3.fromRGB(0, 0, 0), Color3.fromRGB(40, 40, 40), Color3.new(1,1,1)) end, true)
+AddButton("Classic Theme", Tabs.Themes, function() ApplyTheme(Color3.fromRGB(80, 80, 80), Color3.fromRGB(0, 0, 0), Color3.new(1,1,1)) end, true)
+
+-- --- LAGGER TAB (Fast Spawn) ---
+local LagL = Instance.new("TextLabel", Tabs.Lagger)
+LagL.Size = UDim2.new(1,0,0,30); LagL.TextColor3 = Color3.new(1,1,1); LagL.BackgroundTransparency = 1; 
+LagL.Text = "Intensity: 1 (15 blocks)"; LagL.Font = Enum.Font.Gotham
+AddButton("Toggle Lagger", Tabs.Lagger, function(v) State.Lagger = v end)
+AddButton("Change Intensity (1-50)", Tabs.Lagger, function()
+    State.LagIntensity = (State.LagIntensity % 50) + 1
+    LagL.Text = "Intensity: "..State.LagIntensity.." ("..(State.LagIntensity * 15).." blocks)"
+end, true)
+
+task.spawn(function()
+    while true do
+        task.wait(0.05) -- Much faster spawning
+        if State.Lagger and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for i = 1, (State.LagIntensity * 15) do
+                local p = Instance.new("Part", workspace.CurrentCamera)
+                p.Size = LP.Character.HumanoidRootPart.Size
+                p.CFrame = LP.Character.HumanoidRootPart.CFrame * CFrame.new(0, 25, 0)
+                p.CanCollide = false
+                game:GetService("Debris"):AddItem(p, 0.1)
+            end
+        end
+    end
+end)
+
+-- --- DESCRIPTION TAB ---
+local function AddInfo(txt, parent)
+    local l = Instance.new("TextLabel", parent)
+    l.Size = UDim2.new(1, 0, 0, 30)
+    l.BackgroundTransparency = 1
+    l.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+    l.Font = Enum.Font.GothamSemibold
+    l.TextSize = 14
+    l.Text = txt
+end
+AddInfo("Author: stulejek", Tabs.Description)
+AddInfo("Version: 5.1 (Stable)", Tabs.Description)
+AddInfo("Status: Undetected", Tabs.Description)
+
+-- --- KILL UI TAB ---
+AddButton("SELF-DESTRUCT UI", Tabs.Kill, function() ScreenGui:Destroy() end, true)
+
+-- --- GLOBAL LOOPS ---
+UIS.JumpRequest:Connect(function() if State.InfJump then LP.Character.Humanoid:ChangeState("Jumping") end end)
+RS.Stepped:Connect(function()
+    if State.Noclip and LP.Character then for _,v in pairs(LP.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end end
+    if State.Fling and LP.Character then LP.Character.HumanoidRootPart.RotVelocity = Vector3.new(0, 15000, 0) end
+end)
