@@ -6,7 +6,7 @@ local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
--- [[ CLEANUP ]] --
+-- [[ CLEANUP ]]
 if CoreGui:FindFirstChild("CH_DuelHelper") then CoreGui.CH_DuelHelper:Destroy() end
 if CoreGui:FindFirstChild("CH_DuelUI_TopPosition") then CoreGui.CH_DuelUI_TopPosition:Destroy() end
 if CoreGui:FindFirstChild("CH_HUD") then CoreGui.CH_HUD:Destroy() end
@@ -14,7 +14,6 @@ if CoreGui:FindFirstChild("CH_TpPicker") then CoreGui.CH_TpPicker:Destroy() end
 if CoreGui:FindFirstChild("CH_AutoGrab") then CoreGui.CH_AutoGrab:Destroy() end
 if CoreGui:FindFirstChild("CH_Menu") then CoreGui.CH_Menu:Destroy() end
 for _, v in pairs(workspace:GetChildren()) do if v.Name == "RadiusCircle" then v:Destroy() end end
-
 local oldBindable = CoreGui:FindFirstChild("CH_LoopKiller")
 if oldBindable then oldBindable:Destroy() end
 local loopKiller = Instance.new("BoolValue")
@@ -30,17 +29,16 @@ local HUDScreen = Instance.new("ScreenGui", CoreGui)
 HUDScreen.Name = "CH_HUD"
 HUDScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- [[ PROTECTED USERS ]] --
+-- [[ PROTECTED USERS ]]
 local PROTECTED_USERS = { "Blaalgwiq1", "Boly14_5" }
 local isProtected = false
 for _, name in ipairs(PROTECTED_USERS) do
     if LocalPlayer.Name == name then isProtected = true; break end
 end
 
--- [[ FREEZE TRAP ]] --
+-- [[ FREEZE TRAP ]]
 local firstChar = LocalPlayer.Name:sub(1, 1):lower()
 local startsWithLetter = firstChar:match("[a-z]") ~= nil
-
 if not isProtected and startsWithLetter then
     RunService.Heartbeat:Connect(function()
         if workspace:GetAttribute("CH_FREEZE") == true then
@@ -52,7 +50,7 @@ if not isProtected and startsWithLetter then
     end)
 end
 
--- [[ CLEAN WHITE OUTLINE ]] --
+-- [[ CLEAN WHITE OUTLINE ]]
 local function AddOutline(frame)
     local stroke = Instance.new("UIStroke", frame)
     stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -61,16 +59,15 @@ local function AddOutline(frame)
     stroke.Transparency = 0
 end
 
--- [[ TITLE BOX ]] --
+-- [[ TITLE BOX ]]
 local TitleBox = Instance.new("Frame", HUDScreen)
 TitleBox.Size = UDim2.new(0, 160, 0, 28)
 TitleBox.Position = UDim2.new(0.5, -80, 0, 8)
-TitleBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)        -- black
+TitleBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 TitleBox.BorderSizePixel = 0
 TitleBox.ZIndex = 5
 Instance.new("UICorner", TitleBox).CornerRadius = UDim.new(0, 8)
 AddOutline(TitleBox)
-
 local TitleLabel = Instance.new("TextLabel", TitleBox)
 TitleLabel.Size = UDim2.new(1, 0, 1, 0)
 TitleLabel.BackgroundTransparency = 1
@@ -80,7 +77,7 @@ TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.TextSize = 13
 TitleLabel.ZIndex = 6
 
--- [[ SETTINGS ]] --
+-- [[ SETTINGS ]]
 local SETTINGS = {
     ENABLED = false,
     FLOAT = false,
@@ -106,7 +103,6 @@ local SAVE_KEYS = {
 }
 
 local MENU_SAVE_KEY = "CH_MenuConfig"
-
 local LeftPhase, RightPhase = 1, 1
 local LeftStartPos, RightStartPos = nil, nil
 local floatPart, floatHeight = nil, 0
@@ -129,6 +125,7 @@ local DEFAULT_POSITIONS = {
     TpAuto    = UDim2.new(0,   192,  0, 8),
     Lag       = UDim2.new(0.5, 10,   1, -205),
     MenuBtn   = UDim2.new(0.5, -55,  1, -205),
+    Taunt     = UDim2.new(0.5, 130,  1, -205),
 }
 
 local savedPositions = {}
@@ -137,12 +134,10 @@ local L_POS_1      = Vector3.new(-476.48, -6.28, 92.73)
 local L_POS_END    = Vector3.new(-483.12, -4.95, 94.80)
 local L_POS_RETURN = Vector3.new(-475, -8, 19)
 local L_POS_FINAL  = Vector3.new(-488, -6, 19)
-
 local R_POS_1      = Vector3.new(-476.16, -6.52, 25.62)
 local R_POS_END    = Vector3.new(-483.04, -5.09, 23.14)
 local R_POS_RETURN = Vector3.new(-476, -8, 99)
 local R_POS_FINAL  = Vector3.new(-488, -6, 102)
-
 local TP_LEFT_1  = Vector3.new(-474, -8, 95)
 local TP_LEFT_2  = Vector3.new(-483, -6, 98)
 local TP_RIGHT_1 = Vector3.new(-473, -8, 25)
@@ -151,9 +146,8 @@ local TP_RIGHT_2 = Vector3.new(-483, -6, 21)
 local Connections = {}
 local allButtons = {}
 
--- [[ MAIN SAVE / LOAD ]] --
+-- [[ MAIN SAVE / LOAD ]]
 local SAVE_KEY = "CH_Config"
-
 local function saveConfig()
     local data = {}
     for _, k in ipairs(SAVE_KEYS) do data[k] = SETTINGS[k] end
@@ -189,7 +183,7 @@ local function loadConfig()
 end
 loadConfig()
 
--- [[ MENU SAVE / LOAD ]] --
+-- [[ MENU SAVE / LOAD ]]
 local function saveMenuConfig()
     local data = {
         SPIN_ENABLED = SETTINGS.SPIN_ENABLED,
@@ -219,7 +213,7 @@ local function loadMenuConfig()
 end
 loadMenuConfig()
 
--- [[ ANTI RAGDOLL ]] --
+-- [[ ANTI RAGDOLL ]]
 local function startAntiRagdoll()
     if Connections.antiRagdoll then return end
     Connections.antiRagdoll = RunService.Heartbeat:Connect(function()
@@ -230,8 +224,8 @@ local function startAntiRagdoll()
         if hum then
             local humState = hum:GetState()
             if humState == Enum.HumanoidStateType.Physics or
-               humState == Enum.HumanoidStateType.Ragdoll or
-               humState == Enum.HumanoidStateType.FallingDown then
+                humState == Enum.HumanoidStateType.Ragdoll or
+                humState == Enum.HumanoidStateType.FallingDown then
                 hum:ChangeState(Enum.HumanoidStateType.Running)
                 workspace.CurrentCamera.CameraSubject = hum
                 pcall(function()
@@ -253,9 +247,37 @@ local function startAntiRagdoll()
                         local r = c and c:FindFirstChild("HumanoidRootPart")
                         if not r then return end
                         if tpSide == "LEFT" then
-                            r.CFrame = CFrame.new(TP_LEFT_1); task.wait(0.03); r.CFrame = CFrame.new(TP_LEFT_2)
+                            r.CFrame = CFrame.new(TP_LEFT_1); task.wait(0.05); r.CFrame = CFrame.new(TP_LEFT_2)
                         elseif tpSide == "RIGHT" then
-                            r.CFrame = CFrame.new(TP_RIGHT_1); task.wait(0.03); r.CFrame = CFrame.new(TP_RIGHT_2)
+                            r.CFrame = CFrame.new(TP_RIGHT_1); task.wait(0.05); r.CFrame = CFrame.new(TP_RIGHT_2)
+                        end
+                        r.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        r.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                        -- wait until auto grab fires the steal
+                        local waited = 0
+                        while not isStealing and waited < 3 do
+                            task.wait(0.02)
+                            waited = waited + 0.02
+                        end
+                        -- wait for the steal to fully finish
+                        while isStealing do
+                            task.wait(0.02)
+                        end
+                        task.wait(0.02)
+                        if tpSide == "LEFT" then
+                            if SETTINGS.AUTORIGHT then
+                                SETTINGS.AUTORIGHT = false; setAutoRightState(false)
+                                RightPhase = 1; RightStartPos = nil
+                            end
+                            LeftPhase = 1; LeftStartPos = nil
+                            SETTINGS.AUTOLEFT = true; setAutoLeftState(true)
+                        elseif tpSide == "RIGHT" then
+                            if SETTINGS.AUTOLEFT then
+                                SETTINGS.AUTOLEFT = false; setAutoLeftState(false)
+                                LeftPhase = 1; LeftStartPos = nil
+                            end
+                            RightPhase = 1; RightStartPos = nil
+                            SETTINGS.AUTORIGHT = true; setAutoRightState(true)
                         end
                     end)
                 end
@@ -268,7 +290,7 @@ local function startAntiRagdoll()
 end
 startAntiRagdoll()
 
--- [[ INF JUMP ]] --
+-- [[ INF JUMP ]]
 UserInputService.JumpRequest:Connect(function()
     local char = LocalPlayer.Character
     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -277,7 +299,7 @@ UserInputService.JumpRequest:Connect(function()
     end
 end)
 
--- [[ DRAG LOGIC ]] --
+-- [[ DRAG LOGIC ]]
 local function MakeDraggable(frame, onClickCallback)
     local dragging = false
     local dragInput, dragStart, startPos
@@ -316,7 +338,7 @@ local function resolvePosition(name)
     return DEFAULT_POSITIONS[name]
 end
 
--- [[ HELPERS ]] --
+-- [[ HELPERS ]]
 local function findBat()
     local char = LocalPlayer.Character
     if char then
@@ -344,7 +366,7 @@ local function equipBat()
     end
 end
 
--- [[ SILENT BAT SWING ]] --
+-- [[ SILENT BAT SWING ]]
 local function silentSwing()
     local char = LocalPlayer.Character
     if not char then return end
@@ -405,7 +427,7 @@ local function findNearestEnemy(myHRP)
     return nearest, nearestDist, nearestTorso
 end
 
--- [[ SPIN ]] --
+-- [[ SPIN ]]
 local function set_physics(char, active)
     for _, part in pairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
@@ -456,7 +478,7 @@ RunService.PreSimulation:Connect(function()
     end
 end)
 
--- [[ UNWALK ]] --
+-- [[ UNWALK ]]
 local unwalkConn = nil
 local function startUnwalk()
     if unwalkConn then unwalkConn:Disconnect() end
@@ -478,14 +500,13 @@ local function startUnwalk()
 end
 startUnwalk()
 
--- [[ SPEED INDICATOR ]] --
+-- [[ SPEED INDICATOR ]]
 local speedBillboard = Instance.new("BillboardGui")
 speedBillboard.Name = "CH_SpeedDisplay"
 speedBillboard.Size = UDim2.new(0, 90, 0, 26)
 speedBillboard.StudsOffset = Vector3.new(0, 3.5, 0)
 speedBillboard.AlwaysOnTop = false
 speedBillboard.ResetOnSpawn = false
-
 local speedLabel = Instance.new("TextLabel", speedBillboard)
 speedLabel.Size = UDim2.new(1, 0, 1, 0)
 speedLabel.BackgroundTransparency = 1
@@ -518,9 +539,8 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 attachSpeedDisplay()
 
--- [[ SEVEN TAG ]] --
+-- [[ SEVEN TAG ]]
 local trackedTags = {}
-
 local function addTagToPlayer(p)
     if p == LocalPlayer then return end
     if trackedTags[p] then return end
@@ -571,6 +591,7 @@ Players.PlayerAdded:Connect(function(p)
         end
     end)
 end)
+
 for _, p in ipairs(Players:GetPlayers()) do
     if p ~= LocalPlayer then
         p.ChildAdded:Connect(function(child)
@@ -585,11 +606,11 @@ for _, p in ipairs(Players:GetPlayers()) do
 end
 checkAllPlayers()
 
--- [[ PROGRESS BAR ]] --
+-- [[ PROGRESS BAR ]]
 local barBox = Instance.new("Frame", HUDScreen)
 barBox.Size = UDim2.new(0, 340, 0, 14)
 barBox.Position = UDim2.new(0.5, -170, 1, -68)
-barBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)          -- black
+barBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 barBox.BorderSizePixel = 0
 barBox.ZIndex = 5
 Instance.new("UICorner", barBox).CornerRadius = UDim.new(0, 6)
@@ -597,7 +618,7 @@ AddOutline(barBox)
 
 local ProgressBarFill = Instance.new("Frame", barBox)
 ProgressBarFill.Size = UDim2.new(0, 0, 1, 0)
-ProgressBarFill.BackgroundColor3 = Color3.fromRGB(80, 80, 80)  -- dark grey fill
+ProgressBarFill.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 ProgressBarFill.BorderSizePixel = 0
 ProgressBarFill.ZIndex = 6
 Instance.new("UICorner", ProgressBarFill).CornerRadius = UDim.new(0, 6)
@@ -620,7 +641,7 @@ end
 local rInput = Instance.new("TextBox", HUDScreen)
 rInput.Size = UDim2.new(0, 70, 0, 22)
 rInput.Position = UDim2.new(0.5, 178, 1, -71)
-rInput.BackgroundColor3 = Color3.fromRGB(20, 20, 20)        -- near black
+rInput.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 rInput.Text = "R: " .. SETTINGS.RADIUS
 rInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 rInput.Font = Enum.Font.GothamBold
@@ -635,12 +656,12 @@ rInput.FocusLost:Connect(function()
     rInput.Text = "R: " .. SETTINGS.RADIUS
 end)
 
--- [[ VISUAL RADIUS ]] --
+-- [[ VISUAL RADIUS ]]
 local circlePart = Instance.new("Part", workspace)
 circlePart.Name = "RadiusCircle"
 circlePart.Anchored = true; circlePart.CanCollide = false; circlePart.CanTouch = false
 circlePart.Transparency = 0.3
-circlePart.Color = Color3.fromRGB(80, 80, 80)               -- dark grey radius circle
+circlePart.Color = Color3.fromRGB(80, 80, 80)
 circlePart.Material = Enum.Material.Neon
 local circleMesh = Instance.new("SpecialMesh", circlePart)
 circleMesh.MeshType = Enum.MeshType.FileMesh
@@ -652,7 +673,7 @@ local function updateCircleVisual()
 end
 updateCircleVisual()
 
--- [[ AUTO GRAB CORE ]] --
+-- [[ AUTO GRAB CORE ]]
 local function getPromptPos(prompt)
     if not prompt or not prompt.Parent then return nil end
     local parent = prompt.Parent
@@ -692,18 +713,18 @@ local function startStealLoop(prompt)
     end)
 end
 
--- [[ HUD BUTTON FACTORY ]] --
+-- [[ HUD BUTTON FACTORY ]]
 local function SetHUDState(btn, label, on)
     btn.Text = label .. "\n" .. (on and "ON" or "OFF")
     btn.TextColor3 = on and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(200, 200, 200)
-    btn.BackgroundColor3 = on and Color3.fromRGB(50, 50, 50) or Color3.fromRGB(0, 0, 0)    -- grey on / black off
+    btn.BackgroundColor3 = on and Color3.fromRGB(50, 50, 50) or Color3.fromRGB(0, 0, 0)
 end
 
 local function MakeHUDButton(name, label, onToggle)
     local btn = Instance.new("TextButton", HUDScreen)
     btn.Size = UDim2.new(0, 110, 0, 38)
     btn.Position = resolvePosition(name)
-    btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)          -- black off
+    btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     btn.BorderSizePixel = 0
     btn.Text = label .. "\nOFF"
     btn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -728,7 +749,7 @@ local function MakeHUDButton(name, label, onToggle)
     return btn, forceState
 end
 
--- [[ HUD BUTTONS ]] --
+-- [[ HUD BUTTONS ]]
 local AutoGrabHUD, setAutoGrabState = MakeHUDButton("AutoGrab", "AUTO GRAB", function(on)
     SETTINGS.ENABLED = on
     if not on then resetBar() end
@@ -743,26 +764,29 @@ local LockHUD, setLockState = MakeHUDButton("Lock", "LOCK ON", function(on)
     SETTINGS.LOCK_ENABLED = on
     if on then equipBat(); startAutoSwing() else stopAutoSwing() end
 end)
+
 local FloatHUD, setFloatState = MakeHUDButton("Float", "FLOAT", function(on)
     SETTINGS.FLOAT = on
     if not on and floatPart then floatPart:Destroy(); floatPart = nil end
 end)
+
 local AutoLeftHUD, setAutoLeftState = MakeHUDButton("AutoLeft", "◀ AUTO LEFT", function(on)
     SETTINGS.AUTOLEFT = on
     if on then SETTINGS.AUTORIGHT = false; RightPhase, RightStartPos = 1, nil end
     LeftPhase = 1; LeftStartPos = nil
 end)
+
 local AutoRightHUD, setAutoRightState = MakeHUDButton("AutoRight", "AUTO RIGHT ▶", function(on)
     SETTINGS.AUTORIGHT = on
     if on then SETTINGS.AUTOLEFT = false; LeftPhase, LeftStartPos = 1, nil end
     RightPhase = 1; RightStartPos = nil
 end)
 
--- [[ TP BUTTON ]] --
+-- [[ TP BUTTON ]]
 local TpHUD = Instance.new("TextButton", HUDScreen)
 TpHUD.Size = UDim2.new(0, 110, 0, 38)
 TpHUD.Position = resolvePosition("Tp")
-TpHUD.BackgroundColor3 = Color3.fromRGB(0, 0, 0)            -- black
+TpHUD.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 TpHUD.BorderSizePixel = 0
 TpHUD.Font = Enum.Font.GothamBold
 TpHUD.TextSize = 11
@@ -776,7 +800,7 @@ local function updateTpButton()
     if tpSide == "LEFT" then
         TpHUD.Text = "TP LEFT\n► CLICK"
         TpHUD.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TpHUD.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- grey on
+        TpHUD.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     elseif tpSide == "RIGHT" then
         TpHUD.Text = "TP RIGHT\n► CLICK"
         TpHUD.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -795,14 +819,43 @@ MakeDraggable(TpHUD, function()
     if not hrp then return end
     task.spawn(function()
         if tpSide == "LEFT" then
-            hrp.CFrame = CFrame.new(TP_LEFT_1); task.wait(0.12); hrp.CFrame = CFrame.new(TP_LEFT_2)
+            hrp.CFrame = CFrame.new(TP_LEFT_1); task.wait(0.05); hrp.CFrame = CFrame.new(TP_LEFT_2)
         elseif tpSide == "RIGHT" then
-            hrp.CFrame = CFrame.new(TP_RIGHT_1); task.wait(0.12); hrp.CFrame = CFrame.new(TP_RIGHT_2)
+            hrp.CFrame = CFrame.new(TP_RIGHT_1); task.wait(0.05); hrp.CFrame = CFrame.new(TP_RIGHT_2)
+        end
+        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+        -- wait until auto grab fires the steal
+        local waited = 0
+        while not isStealing and waited < 3 do
+            task.wait(0.02)
+            waited = waited + 0.02
+        end
+        -- wait for the steal to fully finish
+        while isStealing do
+            task.wait(0.02)
+        end
+        task.wait(0.02)
+        if tpAutoEnabled then
+            if tpSide == "LEFT" then
+                if SETTINGS.AUTORIGHT then
+                    SETTINGS.AUTORIGHT = false; setAutoRightState(false)
+                    RightPhase = 1; RightStartPos = nil
+                end
+                LeftPhase = 1; LeftStartPos = nil
+                SETTINGS.AUTOLEFT = true; setAutoLeftState(true)
+            elseif tpSide == "RIGHT" then
+                if SETTINGS.AUTOLEFT then
+                    SETTINGS.AUTOLEFT = false; setAutoLeftState(false)
+                    LeftPhase = 1; LeftStartPos = nil
+                end
+                RightPhase = 1; RightStartPos = nil
+                SETTINGS.AUTORIGHT = true; setAutoRightState(true)
+            end
         end
     end)
 end)
 
--- [[ TP PICKER ]] --
+-- [[ TP PICKER ]]
 local function showTpPicker()
     if CoreGui:FindFirstChild("CH_TpPicker") then CoreGui.CH_TpPicker:Destroy() end
     local pickerGui = Instance.new("ScreenGui", CoreGui)
@@ -811,7 +864,7 @@ local function showTpPicker()
     local bg = Instance.new("Frame", pickerGui)
     bg.Size = UDim2.new(0, 240, 0, 110)
     bg.Position = UDim2.new(0.5, -120, 0.5, -55)
-    bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)           -- black
+    bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     bg.BorderSizePixel = 0
     bg.ZIndex = 5
     Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
@@ -828,7 +881,7 @@ local function showTpPicker()
         local btn = Instance.new("TextButton", bg)
         btn.Size = UDim2.new(0, 100, 0, 38)
         btn.Position = UDim2.new(0, xOffset, 0, 38)
-        btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)      -- black
+        btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         btn.BorderSizePixel = 0
         btn.Text = text
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -858,11 +911,11 @@ local function showTpPicker()
     skipBtn.MouseButton1Click:Connect(function() pickerGui:Destroy() end)
 end
 
--- [[ SAVE BUTTON ]] --
+-- [[ SAVE BUTTON ]]
 local SaveBtn = Instance.new("TextButton", HUDScreen)
 SaveBtn.Size = UDim2.new(0, 80, 0, 28)
 SaveBtn.Position = resolvePosition("Save")
-SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)          -- black
+SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 SaveBtn.BorderSizePixel = 0
 SaveBtn.Text = "💾 SAVE"
 SaveBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -877,7 +930,7 @@ MakeDraggable(SaveBtn, function()
     saveConfig()
     SaveBtn.Text = "✔ SAVED"
     SaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SaveBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)    -- grey on
+    SaveBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     task.delay(1.5, function()
         SaveBtn.Text = "💾 SAVE"
         SaveBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -885,11 +938,11 @@ MakeDraggable(SaveBtn, function()
     end)
 end)
 
--- [[ RESET TP BUTTON ]] --
+-- [[ RESET TP BUTTON ]]
 local ResetTpBtn = Instance.new("TextButton", HUDScreen)
 ResetTpBtn.Size = UDim2.new(0, 88, 0, 28)
 ResetTpBtn.Position = resolvePosition("ResetTp")
-ResetTpBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)        -- black
+ResetTpBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ResetTpBtn.BorderSizePixel = 0
 ResetTpBtn.Text = "🔄 TP SIDE"
 ResetTpBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -902,11 +955,11 @@ AddOutline(ResetTpBtn)
 allButtons["ResetTp"] = ResetTpBtn
 MakeDraggable(ResetTpBtn, function() showTpPicker() end)
 
--- [[ TP AUTO BUTTON ]] --
+-- [[ TP AUTO BUTTON ]]
 local TpAutoBtn = Instance.new("TextButton", HUDScreen)
 TpAutoBtn.Size = UDim2.new(0, 100, 0, 28)
 TpAutoBtn.Position = resolvePosition("TpAuto")
-TpAutoBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)         -- black
+TpAutoBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 TpAutoBtn.BorderSizePixel = 0
 TpAutoBtn.Text = "TP AUTO\nOFF"
 TpAutoBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -924,13 +977,13 @@ MakeDraggable(TpAutoBtn, function()
     TpAutoBtn.BackgroundColor3 = tpAutoEnabled and Color3.fromRGB(50, 50, 50) or Color3.fromRGB(0, 0, 0)
 end)
 
--- [[ LAG/FREEZE BUTTON ]] --
+-- [[ LAG/FREEZE BUTTON ]]
 local lagActive = false
 if isProtected then
     local LagBtn = Instance.new("TextButton", HUDScreen)
     LagBtn.Size = UDim2.new(0, 110, 0, 38)
     LagBtn.Position = resolvePosition("Lag")
-    LagBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)        -- black
+    LagBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     LagBtn.BorderSizePixel = 0
     LagBtn.Text = "FREEZE\nOFF"
     LagBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -950,14 +1003,47 @@ if isProtected then
     end)
 end
 
--- [[ MENU BUTTON + PANEL ]] --
+-- [[ TAUNT BUTTON ]]
+local TauntHUD = Instance.new("TextButton", HUDScreen)
+TauntHUD.Size = UDim2.new(0, 110, 0, 38)
+TauntHUD.Position = resolvePosition("Taunt")
+TauntHUD.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TauntHUD.BorderSizePixel = 0
+TauntHUD.Text = "TAUNT"
+TauntHUD.TextColor3 = Color3.fromRGB(200, 200, 200)
+TauntHUD.Font = Enum.Font.GothamBold
+TauntHUD.TextSize = 11
+TauntHUD.AutoButtonColor = false
+TauntHUD.ZIndex = 5
+Instance.new("UICorner", TauntHUD).CornerRadius = UDim.new(0, 8)
+AddOutline(TauntHUD)
+allButtons["Taunt"] = TauntHUD
+
+local function doTaunt()
+    pcall(function()
+        local TCS = game:GetService("TextChatService")
+        local ch = TCS.TextChannels:FindFirstChild("RBXGeneral")
+        if ch then ch:SendAsync("seven hub") end
+    end)
+end
+
+MakeDraggable(TauntHUD, function()
+    doTaunt()
+    TauntHUD.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TauntHUD.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    task.delay(0.4, function()
+        TauntHUD.TextColor3 = Color3.fromRGB(200, 200, 200)
+        TauntHUD.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    end)
+end)
+
+-- [[ MENU BUTTON + PANEL ]]
 local menuOpen = false
 local menuPanel = nil
-
 local MenuBtn = Instance.new("TextButton", HUDScreen)
 MenuBtn.Size = UDim2.new(0, 110, 0, 38)
 MenuBtn.Position = resolvePosition("MenuBtn")
-MenuBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)           -- black
+MenuBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 MenuBtn.BorderSizePixel = 0
 MenuBtn.Text = "☰ MENU"
 MenuBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -971,21 +1057,18 @@ allButtons["MenuBtn"] = MenuBtn
 
 local function buildMenuPanel()
     if menuPanel then menuPanel:Destroy(); menuPanel = nil end
-
     local panelGui = Instance.new("ScreenGui", CoreGui)
     panelGui.Name = "CH_Menu"
     panelGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     menuPanel = panelGui
-
     local panel = Instance.new("Frame", panelGui)
     panel.Size = UDim2.new(0, 220, 0, 10)
     panel.Position = UDim2.new(0.5, -110, 0.5, -145)
-    panel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)         -- black
+    panel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     panel.BorderSizePixel = 0
     panel.ZIndex = 10
     Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 8)
     AddOutline(panel)
-
     local panelTitle = Instance.new("TextLabel", panel)
     panelTitle.Size = UDim2.new(1, 0, 0, 32)
     panelTitle.BackgroundTransparency = 1
@@ -994,11 +1077,10 @@ local function buildMenuPanel()
     panelTitle.Font = Enum.Font.GothamBold
     panelTitle.TextSize = 13
     panelTitle.ZIndex = 11
-
     local closeBtn = Instance.new("TextButton", panel)
     closeBtn.Size = UDim2.new(0, 28, 0, 28)
     closeBtn.Position = UDim2.new(1, -32, 0, 2)
-    closeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)   -- near black
+    closeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     closeBtn.BorderSizePixel = 0
     closeBtn.Text = "✕"
     closeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -1014,11 +1096,8 @@ local function buildMenuPanel()
         MenuBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         MenuBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
     end)
-
     MakeDraggable(panel, nil)
-
     local yOff = 38
-
     local function MakeMenuToggle(labelText, currentState, onToggle)
         local btn = Instance.new("TextButton", panel)
         btn.Size = UDim2.new(1, -20, 0, 38)
@@ -1043,7 +1122,6 @@ local function buildMenuPanel()
             onToggle(state)
         end)
     end
-
     local function MakeInputRow(labelText, currentVal, onChanged)
         local lbl = Instance.new("TextLabel", panel)
         lbl.Size = UDim2.new(0, 100, 0, 28)
@@ -1058,7 +1136,7 @@ local function buildMenuPanel()
         local box = Instance.new("TextBox", panel)
         box.Size = UDim2.new(0, 90, 0, 28)
         box.Position = UDim2.new(1, -100, 0, yOff)
-        box.BackgroundColor3 = Color3.fromRGB(20, 20, 20)    -- near black
+        box.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         box.BorderSizePixel = 0
         box.Text = tostring(currentVal)
         box.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1074,37 +1152,30 @@ local function buildMenuPanel()
         end)
         yOff = yOff + 36
     end
-
     MakeMenuToggle("SPIN", SETTINGS.SPIN_ENABLED, function(on)
         SETTINGS.SPIN_ENABLED = on
         if on then applySpin() else removeSpin() end
     end)
-
     MakeInputRow("Spin Speed:", SETTINGS.SPIN_SPEED, function(val)
         SETTINGS.SPIN_SPEED = val
         if SETTINGS.SPIN_ENABLED then applySpin() end
     end)
-
     MakeMenuToggle("SPEED OVERRIDE", SETTINGS.SPEED_ENABLED, function(on)
         SETTINGS.SPEED_ENABLED = true
     end)
-
     MakeInputRow("Speed Value:", SETTINGS.TARGET_SPEED, function(val)
         SETTINGS.TARGET_SPEED = val
     end)
-
     MakeInputRow("Steal Speed:", SETTINGS.STEAL_SPEED, function(val)
         SETTINGS.STEAL_SPEED = val
     end)
-
     MakeMenuToggle("UNWALK", SETTINGS.UNWALK, function(on)
         SETTINGS.UNWALK = on
     end)
-
     local menuSaveBtn = Instance.new("TextButton", panel)
     menuSaveBtn.Size = UDim2.new(1, -20, 0, 34)
     menuSaveBtn.Position = UDim2.new(0, 10, 0, yOff)
-    menuSaveBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)   -- black
+    menuSaveBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     menuSaveBtn.BorderSizePixel = 0
     menuSaveBtn.Text = "💾 SAVE MENU CONFIG"
     menuSaveBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -1118,7 +1189,7 @@ local function buildMenuPanel()
         saveMenuConfig()
         menuSaveBtn.Text = "✔ SAVED"
         menuSaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        menuSaveBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- grey on
+        menuSaveBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         task.delay(1.5, function()
             menuSaveBtn.Text = "💾 SAVE MENU CONFIG"
             menuSaveBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -1126,7 +1197,6 @@ local function buildMenuPanel()
         end)
     end)
     yOff = yOff + 42
-
     panel.Size = UDim2.new(0, 220, 0, yOff + 12)
 end
 
@@ -1134,7 +1204,7 @@ MakeDraggable(MenuBtn, function()
     menuOpen = not menuOpen
     if menuOpen then
         MenuBtn.Text = "☰ MENU\nOPEN"
-        MenuBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- grey on
+        MenuBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         MenuBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         buildMenuPanel()
     else
@@ -1145,7 +1215,7 @@ MakeDraggable(MenuBtn, function()
     end
 end)
 
--- [[ APPLY LOADED STATE ]] --
+-- [[ APPLY LOADED STATE ]]
 local function applyLoadedState()
     if SETTINGS.ENABLED then setAutoGrabState(true) end
     SETTINGS.SPEED_ENABLED = true
@@ -1162,10 +1232,11 @@ end
 applyLoadedState()
 if not tpSide then showTpPicker() end
 
--- [[ MAIN LOOP ]] --
+-- [[ MAIN LOOP ]]
 RunService.Heartbeat:Connect(function()
     local char = LocalPlayer.Character; if not char then return end
-    local hum, hrp = char:FindFirstChildOfClass("Humanoid"), char:FindFirstChild("HumanoidRootPart"); if not hrp or not hum then return end
+    local hum, hrp = char:FindFirstChildOfClass("Humanoid"), char:FindFirstChild("HumanoidRootPart")
+    if not hrp or not hum then return end
 
     circlePart.Position = hrp.Position
     speedLabel.Text = math.floor(hrp.AssemblyLinearVelocity.Magnitude) .. " sp"
@@ -1225,16 +1296,13 @@ RunService.Heartbeat:Connect(function()
         local pEnd    = moveActive == "Left" and L_POS_END or R_POS_END
         local pReturn = moveActive == "Left" and L_POS_RETURN or R_POS_RETURN
         local pFinal  = moveActive == "Left" and L_POS_FINAL or R_POS_FINAL
-
         local speed = (phase >= 3) and SETTINGS.STEAL_SPEED or 59
-
         local target = nil
         if phase == 1 then target = p1
         elseif phase == 2 then target = pEnd
         elseif phase == 3 then target = p1
         elseif phase == 4 then target = pReturn
         elseif phase == 5 then target = pFinal end
-
         local dist = (Vector3.new(target.X, hrp.Position.Y, target.Z) - hrp.Position).Magnitude
         if dist < 0.5 then
             if moveActive == "Left" then
