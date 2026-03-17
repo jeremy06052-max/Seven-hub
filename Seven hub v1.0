@@ -253,13 +253,11 @@ local function startAntiRagdoll()
                         end
                         r.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                         r.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                        -- wait until auto grab fires the steal
                         local waited = 0
                         while not isStealing and waited < 3 do
                             task.wait(0.02)
                             waited = waited + 0.02
                         end
-                        -- wait for the steal to fully finish
                         while isStealing do
                             task.wait(0.02)
                         end
@@ -760,9 +758,10 @@ SpeedHUD.Visible = false
 SETTINGS.SPEED_ENABLED = true
 setSpeedState(true)
 
-local LockHUD, setLockState = MakeHUDButton("Lock", "LOCK ON", function(on)
+-- [[ LOCK BUTTON - only locks on to players, no bat ]]
+local LockHUD, setLockState = MakeHUDButton("Lock", "LOCK", function(on)
     SETTINGS.LOCK_ENABLED = on
-    if on then equipBat(); startAutoSwing() else stopAutoSwing() end
+    if not on then stopAutoSwing() end
 end)
 
 local FloatHUD, setFloatState = MakeHUDButton("Float", "FLOAT", function(on)
@@ -824,13 +823,11 @@ MakeDraggable(TpHUD, function()
             hrp.CFrame = CFrame.new(TP_RIGHT_1); task.wait(0.05); hrp.CFrame = CFrame.new(TP_RIGHT_2)
         end
         hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-        -- wait until auto grab fires the steal
         local waited = 0
         while not isStealing and waited < 3 do
             task.wait(0.02)
             waited = waited + 0.02
         end
-        -- wait for the steal to fully finish
         while isStealing do
             task.wait(0.02)
         end
@@ -1220,7 +1217,7 @@ local function applyLoadedState()
     if SETTINGS.ENABLED then setAutoGrabState(true) end
     SETTINGS.SPEED_ENABLED = true
     setSpeedState(true)
-    if SETTINGS.LOCK_ENABLED then setLockState(true); equipBat(); startAutoSwing() end
+    if SETTINGS.LOCK_ENABLED then setLockState(true) end
     if SETTINGS.FLOAT then setFloatState(true) end
     if SETTINGS.AUTOLEFT then setAutoLeftState(true) end
     if SETTINGS.AUTORIGHT then setAutoRightState(true) end
@@ -1246,7 +1243,6 @@ RunService.Heartbeat:Connect(function()
     end
 
     if SETTINGS.LOCK_ENABLED then
-        if not char:FindFirstChild("Bat") then equipBat() end
         local target, dist, torso = findNearestEnemy(hrp)
         if target and torso then
             local fullDir = torso.Position - hrp.Position
